@@ -39,6 +39,20 @@ class Database {
   }
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------
+public function getById($id) {
+  $query = 'SELECT * FROM alumnos_data WHERE id = ?';
+  try {
+    $statement = $this->pdo->prepare($query);
+    $statement->bindParam(1, $id, PDO::PARAM_INT);
+    $statement->execute();
+    $result = $statement->fetch(PDO::FETCH_ASSOC);
+    return $result;
+  } catch(PDOException $error) {
+    die('Error: ' . $error->getMessage());
+  }
+}
+
+//----------------------------------------------------------------------------------------------------------------------------------------------------
   public function createStudent($nombre, $apellido, $edad, $carrera) {
     $query = 'INSERT INTO alumnos_data (nombre, apellido, edad, carrera) VALUES (?, ?, ?, ?);';
     try {

@@ -1,6 +1,7 @@
 <?php 
 
 require_once '../classes/database_class.php';
+require_once '../classes/middlewares.php';
 
 $db = new Database();
 $pdo = $db->getPdo();
@@ -10,9 +11,16 @@ switch($_SERVER['REQUEST_METHOD']) {
 
 //------------------------------------------------------------------------------------------------------------------ 
   case 'GET':
-    $users = $db->getAll();
-    echo json_encode($users);
+    if (isset($_GET['id'])) {
+      $id = $_GET['id'];
+      $userById = $db->getById($id);
+      echo json_encode($userById);
+    } else {
+      $users = $db->getAll();
+      echo json_encode($users);
+    }
     break;
+
 
 //------------------------------------------------------------------------------------------------------------------  
   case 'POST':
@@ -21,8 +29,16 @@ switch($_SERVER['REQUEST_METHOD']) {
     $apellido = $_POST['apellido'];
     $edad = $_POST['edad'];
     $carrera = $_POST['carrera'];
+
+    $validationResult = Middlewares::checkNoEmpty($nombre, $apellido, $edad, $carrera);
+
     $allowedCarreras = ["Ingeniería", "Medicina", "Arquitectura"];
 
+    if (!$validationResult['success']) {
+      $response = ['message' => 'Fields cannot be empty, age must be 18 or over'];
+      echo json_encode($response);
+      exit;
+    }
     if (in_array($carrera, $allowedCarreras)) {
         $db->createStudent($nombre, $apellido, $edad, $carrera);
         http_response_code(201);
