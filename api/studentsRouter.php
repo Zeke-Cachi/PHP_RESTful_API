@@ -30,13 +30,17 @@ switch($_SERVER['REQUEST_METHOD']) {
     $edad = $_POST['edad'];
     $carrera = $_POST['carrera'];
 
-    $validationResult = Middlewares::checkNoEmpty($nombre, $apellido, $edad, $carrera);
+    $validateEmpty = Middlewares::checkNoEmpty($nombre, $apellido, $edad, $carrera);
+    $validateType = Middlewares::checkInputType($nombre, $apellido, $edad, $carrera);
 
     $allowedCarreras = ["Ingeniería", "Medicina", "Arquitectura"];
 
-    if (!$validationResult['success']) {
-      $response = ['message' => 'Fields cannot be empty, age must be 18 or over'];
-      echo json_encode($response);
+    if (!$validateEmpty['success']) {
+      echo $validateEmpty['message'];
+      exit;
+    }
+    if (!$validateType['success']) {
+      echo $validateType['message'];
       exit;
     }
     if (in_array($carrera, $allowedCarreras)) {
@@ -60,15 +64,17 @@ switch($_SERVER['REQUEST_METHOD']) {
     $edad = $_PUT['edad'];
     $carrera = $_PUT['carrera'];
     $allowedCarreras = ["Ingeniería", "Medicina", "Arquitectura"];
+
+    $validationResult = Middlewares::checkNoEmpty($nombre, $apellido, $edad, $carrera);
     
-    if (in_array($carrera, $allowedCarreras)) {
+    if (in_array($carrera, $allowedCarreras) && $validationResult['success']) {
       $db->editStudent($id, $nombre, $apellido, $edad, $carrera);
       http_response_code(201);
       $response = ['message' => 'Student edited successfully'];
         echo json_encode($response);
     } else {
       http_response_code(400);
-      $response = ['message' => 'Invalid carrera value'];
+      $response = ['message' => 'Invalid values'];
       echo json_encode($response);
   }
     break;

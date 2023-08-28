@@ -9,6 +9,15 @@ class Middlewares {
     }
     return ['success' => true];
   }
+
+  public static function checkInputType($nombre, $apellido, $edad, $carrera) {
+    if (!is_string($nombre) || !is_string($apellido) || !is_numeric($edad) || !is_string($carrera)) {
+      http_response_code(400);
+      return ['success'=> false, 'message' => "edad must be a number, all other variables must be words"];
+    }
+    return ['success' => true];
+  }
+
 }
 
 
