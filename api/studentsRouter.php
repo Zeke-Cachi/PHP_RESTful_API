@@ -1,7 +1,7 @@
 <?php 
 
-require_once '../classes/database_class.php';
-require_once '../classes/middlewares.php';
+require_once __DIR__ .'../classes/database_class.php';
+require_once __DIR__ .'../classes/middlewares.php';
 
 $db = new Database();
 $pdo = $db->getPdo();
@@ -76,8 +76,9 @@ switch($_SERVER['REQUEST_METHOD']) {
       http_response_code(400);
       $response = ['message' => 'Invalid values'];
       echo json_encode($response);
-  }
+    }
     break;
+
 
 //------------------------------------------------------------------------------------------------------------------ 
   case 'DELETE':

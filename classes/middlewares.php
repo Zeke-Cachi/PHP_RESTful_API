@@ -17,7 +17,6 @@ class Middlewares {
     }
     return ['success' => true];
   }
-
 }
 
 
